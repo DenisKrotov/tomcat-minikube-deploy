@@ -11,10 +11,13 @@ pipeline {
             steps {
                 script {
                     echo 'Installing kubectl...'
-                    // Установка kubectl
+                    // Установка kubectl в домашнюю директорию (без прав root)
                     sh '''
                         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-                        install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+                        chmod +x ./kubectl
+                        mkdir -p $HOME/bin
+                        mv ./kubectl $HOME/bin/
+                        export PATH="$HOME/bin:$PATH"
                         kubectl version --client
                     '''
                 }
@@ -33,8 +36,11 @@ pipeline {
             steps {
                 script {
                     echo 'Deploy Tomcat in Minikube...'
-                    sh 'kubectl apply -f k8s/'
-                    sh 'kubectl rollout status deployment/tomcat-deployment --timeout=180s'
+                    sh '''
+                        export PATH="$HOME/bin:$PATH"
+                        kubectl apply -f k8s/
+                        kubectl rollout status deployment/tomcat-deployment --timeout=180s
+                    '''
                     echo 'Containers created'
                 }
             }
@@ -45,6 +51,7 @@ pipeline {
                 script {
                     echo 'Check Deploy'
                     sh '''
+                        export PATH="$HOME/bin:$PATH"
                         kubectl get pods -o wide
                         kubectl get services
                         kubectl get deployments
@@ -58,8 +65,9 @@ pipeline {
         success {
             echo '!ALL GOOD!'
             sh '''
+                export PATH="$HOME/bin:$PATH"
                 echo "Service created on:"
-                kubectl get service tomcat-service -o jsonpath="{.status.loadBalancer.ingress[0].ip}" || echo "Use NodePort"
+                kubectl get service tomcat-service
             '''
         }
         failure {
