@@ -10,7 +10,20 @@ pipeline {
         // Будет работать с GitHub webhook + secret
         githubPush()
     }
-    
+    stages {
+        stage('Setup Kubernetes Tools') {
+            steps {
+                script {
+                    echo 'Installing kubectl...'
+                    // Установка kubectl
+                    sh '''
+                        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                        install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+                        kubectl version --client
+                    '''
+                }
+            }
+        }
     stages {
         stage('Checkout Code') {
             steps {
