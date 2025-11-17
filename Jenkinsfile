@@ -25,7 +25,7 @@ pipeline {
         
         stage('Checkout Code') {
             steps {
-                echo 'Checkout Code from GitHub...'
+                echo 'Checkout Code from GitHub1...'
                 git branch: 'main',
                     url: 'https://github.com/DenisKrotov/tomcat-minikube-deploy.git'
             }
