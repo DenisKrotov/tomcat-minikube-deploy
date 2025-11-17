@@ -11,7 +11,6 @@ pipeline {
             steps {
                 script {
                     echo 'Installing kubectl...'
-                    // Установка kubectl в домашнюю директорию (без прав root)
                     sh '''
                         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
                         chmod +x ./kubectl
