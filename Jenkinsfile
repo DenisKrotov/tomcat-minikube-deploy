@@ -38,7 +38,7 @@ pipeline {
                     sh '''
                         export PATH="$HOME/bin:$PATH"
                         kubectl apply -f k8s/ --validate=false --insecure-skip-tls-verify=true
-                        kubectl rollout status deployment/tomcat-deployment --timeout=180s
+                        kubectl rollout status deployment/tomcat-deployment --timeout=180s --insecure-skip-tls-verify=true
                     '''
                     echo 'Containers created'
                 }
@@ -51,9 +51,9 @@ pipeline {
                     echo 'Check Deploy'
                     sh '''
                         export PATH="$HOME/bin:$PATH"
-                        kubectl get pods -o wide
-                        kubectl get services
-                        kubectl get deployments
+                        kubectl get pods -o wide --insecure-skip-tls-verify=true
+                        kubectl get services --insecure-skip-tls-verify=true
+                        kubectl get deployments --insecure-skip-tls-verify=true
                     '''
                 }
             }
@@ -66,7 +66,7 @@ pipeline {
             sh '''
                 export PATH="$HOME/bin:$PATH"
                 echo "Service created on:"
-                kubectl get service tomcat-service
+                kubectl get service tomcat-service --insecure-skip-tls-verify=true
             '''
         }
         failure {
