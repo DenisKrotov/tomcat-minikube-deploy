@@ -37,7 +37,7 @@ pipeline {
                     echo 'Deploy Tomcat in Minikube...'
                     sh '''
                         export PATH="$HOME/bin:$PATH"
-                        kubectl apply -f k8s/ --validate=false
+                        kubectl apply -f k8s/ --validate=false --insecure-skip-tls-verify=true
                         kubectl rollout status deployment/tomcat-deployment --timeout=180s
                     '''
                     echo 'Containers created'
